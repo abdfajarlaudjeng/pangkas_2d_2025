@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>2D Main Berdasarkan Ekor</title>
+  <title>2D Main & AI Berdasarkan Ekor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .number-cell span {
@@ -20,11 +20,11 @@
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 p-6">
-  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-    <h1 class="text-2xl font-bold mb-4 text-center text-blue-700">2D MAIN BERDASARKAN EKOR</h1>
+  <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-4 text-center text-blue-700">2D MAIN & AI BERDASARKAN EKOR</h1>
 
     <!-- Filter Dropdown -->
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between mb-6">
       <label for="filterEkor" class="font-medium text-gray-700">Filter Ekor:</label>
       <select id="filterEkor" class="border rounded px-3 py-2 text-gray-700">
         <option value="all">Tampilkan Semua</option>
@@ -41,22 +41,36 @@
       </select>
     </div>
 
-    <!-- Tabel -->
-    <table class="w-full table-auto border border-gray-300">
+    <!-- Tabel 1: 2D MAIN -->
+    <h2 class="text-xl font-semibold mb-2 text-blue-600">Tabel 2D Main</h2>
+    <table class="w-full table-auto border border-gray-300 mb-8">
       <thead class="bg-blue-100">
         <tr>
           <th class="border px-4 py-2 text-left">EKOR</th>
           <th class="border px-4 py-2 text-left">2D MAIN</th>
         </tr>
       </thead>
-      <tbody id="dataBody">
-        <!-- Baris akan diisi oleh JavaScript -->
-      </tbody>
+      <tbody id="dataBody"></tbody>
+    </table>
+
+    <!-- Tabel 2: AI CRASS, CADANGAN, AS, BBFS -->
+    <h2 class="text-xl font-semibold mb-2 text-blue-600">Tabel AI Berdasarkan Ekor</h2>
+    <table class="w-full table-auto border border-gray-300">
+      <thead class="bg-blue-100">
+        <tr>
+          <th class="border px-4 py-2 text-left">EKOR</th>
+          <th class="border px-4 py-2 text-left">AI CRASS</th>
+          <th class="border px-4 py-2 text-left">AI CADANGAN</th>
+          <th class="border px-4 py-2 text-left">AS</th>
+          <th class="border px-4 py-2 text-left">BBFS</th>
+        </tr>
+      </thead>
+      <tbody id="aiBody"></tbody>
     </table>
   </div>
 
   <script>
-    const data = {
+    const data2D = {
       0: ["02","07","08","16","23","26","29","62","79","89","92","97","98"],
       1: ["01","03","09","13","14","15","16","19","40","50","79","90"],
       2: ["04","05","06","12","17","30","36","40","50","60","70","87"],
@@ -69,40 +83,67 @@
       9: ["18","38","51","52","53","57","74","75","82","83"]
     };
 
-    const tbody = document.getElementById("dataBody");
+    const dataAI = {
+      0: { crass: "190", cadangan: "23678", as: "0", bbfs: "34056789" },
+      1: { crass: "109", cadangan: "24578", as: "1", bbfs: "23456789" },
+      2: { crass: "670", cadangan: "13895", as: "2", bbfs: "12345680" },
+      3: { crass: "7890", cadangan: "2346", as: "3", bbfs: "12356789" },
+      4: { crass: "89", cadangan: "1034567", as: "4", bbfs: "23457890" },
+      5: { crass: "410", cadangan: "9532", as: "5", bbfs: "12357890" },
+      6: { crass: "170", cadangan: "23569", as: "6", bbfs: "13467890" },
+      7: { crass: "23567", cadangan: "147", as: "7", bbfs: "34567890" },
+      8: { crass: "2345", cadangan: "1789", as: "8", bbfs: "12567890" },
+      9: { crass: "568", cadangan: "3479", as: "9", bbfs: "12345679" }
+    };
+
+    const tbody2D = document.getElementById("dataBody");
+    const tbodyAI = document.getElementById("aiBody");
     const filter = document.getElementById("filterEkor");
 
-    function renderTable(filterValue = "all") {
-      tbody.innerHTML = "";
-      for (let ekor in data) {
+    function renderTables(filterValue = "all") {
+      tbody2D.innerHTML = "";
+      tbodyAI.innerHTML = "";
+
+      for (let ekor in data2D) {
         if (filterValue !== "all" && filterValue !== ekor) continue;
 
-        const row = document.createElement("tr");
-
+        // Tabel 2D
+        const row2D = document.createElement("tr");
         const ekorCell = document.createElement("td");
         ekorCell.className = "border px-4 py-2 font-semibold";
         ekorCell.textContent = ekor;
 
         const numberCell = document.createElement("td");
         numberCell.className = "border px-4 py-2 number-cell";
-        data[ekor].forEach(num => {
+        data2D[ekor].forEach(num => {
           const span = document.createElement("span");
           span.textContent = num;
           numberCell.appendChild(span);
         });
 
-        row.appendChild(ekorCell);
-        row.appendChild(numberCell);
-        tbody.appendChild(row);
+        row2D.appendChild(ekorCell);
+        row2D.appendChild(numberCell);
+        tbody2D.appendChild(row2D);
+
+        // Tabel AI
+        const rowAI = document.createElement("tr");
+        rowAI.innerHTML = `
+          <td class="border px-4 py-2 font-semibold">${ekor}</td>
+          <td class="border px-4 py-2">${dataAI[ekor].crass}</td>
+          <td class="border px-4 py-2">${dataAI[ekor].cadangan}</td>
+          <td class="border px-4 py-2">${dataAI[ekor].as}</td>
+          <td class="border px-4 py-2">${dataAI[ekor].bbfs}</td>
+        `;
+        tbodyAI.appendChild(rowAI);
       }
     }
 
     filter.addEventListener("change", () => {
-      renderTable(filter.value);
+      renderTables(filter.value);
     });
 
     // Initial render
-    renderTable();
+    renderTables();
   </script>
 </body>
 </html>
